@@ -1,0 +1,619 @@
+PROJECT: Student Portal Management System
+TYPE: Full Stack Web Application (Apprentice/Academic Project)
+PURPOSE: A production-ready student portal for managing academic 
+         operations with role-based authentication and dashboards.
+
+═══════════════════════════════════════════════════════════
+TECH STACK — COMPLETE
+═══════════════════════════════════════════════════════════
+
+BACKEND:
+  - Language      : Java 21
+  - Framework     : Spring Boot 3.3
+  - Security      : Spring Security 6 + JWT (jjwt 0.12.5)
+  - ORM           : Spring Data JPA + Hibernate
+  - Database      : MySQL 8
+  - Build Tool    : Maven 3.9
+  - API Docs      : Swagger / OpenAPI 3 (springdoc 2.5.0)
+  - Mapping       : MapStruct 1.5.5
+  - Boilerplate   : Lombok
+  - Validation    : Jakarta Bean Validation
+  - Testing       : JUnit 5 + Mockito + MockMvc + H2 (test profile)
+  - Logging       : SLF4J + Logback
+  - Actuator      : Spring Boot Actuator (health endpoint)
+
+FRONTEND:
+  - Framework     : Angular 20 (Standalone Components)
+  - UI Library    : Angular Material 20
+  - Language      : TypeScript 5.5
+  - Forms         : Angular Reactive Forms
+  - HTTP          : Angular HttpClient + Functional Interceptors
+  - Routing       : Angular Router with Lazy Loading
+  - State         : Angular Signals
+  - Reactive      : RxJS 7.8
+  - Styling       : SCSS + Angular Material Theming
+  - Server        : Nginx (inside Docker container)
+
+DATABASE:
+  - Engine        : MySQL 8.0
+  - ORM Strategy  : Hibernate auto DDL (update mode)
+  - Soft Delete   : deleted boolean column on all tables
+  - Auditing      : Spring Data JPA Auditing
+                    (createdDate, updatedDate, createdBy, updatedBy)
+  - Test DB       : H2 in-memory (for unit/integration tests)
+
+DEVOPS:
+  - Containers    : Docker + Docker Compose
+  - CI/CD         : GitHub Actions
+  - Deployment    : Render.com (free tier)
+  - Registry      : Docker Hub
+
+═══════════════════════════════════════════════════════════
+ARCHITECTURE
+═══════════════════════════════════════════════════════════
+
+BACKEND LAYERS:
+  Controller Layer  → REST endpoints, request validation, HTTP codes
+  Service Layer     → Business logic, transactions (@Transactional)
+  Repository Layer  → Spring Data JPA, custom JPQL queries
+  Entity Layer      → JPA entities, all extend BaseEntity
+  Security Layer    → JWT filter, SecurityConfig, UserDetails
+  Exception Layer   → GlobalExceptionHandler, custom exceptions
+  DTO Layer         → Request/Response DTOs (separate from entities)
+  Mapper Layer      → MapStruct mappers (Entity ↔ DTO)
+
+FRONTEND LAYERS:
+  features/         → Lazy-loaded page components (10 pages)
+  core/services/    → HTTP API services (one per module)
+  core/models/      → TypeScript interfaces matching backend DTOs
+  core/guards/      → authGuard, roleGuard (functional)
+  core/interceptors/→ authInterceptor (JWT), errorInterceptor
+  shared/components/→ LayoutComponent (sidebar + toolbar)
+
+DESIGN PATTERNS USED:
+  - Repository Pattern (Spring Data JPA)
+  - Service Layer Pattern (interface + impl)
+  - DTO Pattern (decoupled API contracts)
+  - Builder Pattern (Lombok @Builder on entities/DTOs)
+  - Singleton Pattern (Spring beans, Angular services)
+  - Guard Pattern (Angular route protection)
+  - Interceptor Pattern (JWT injection, error handling)
+  - Soft Delete Pattern (deleted flag, never hard delete)
+  - Audit Trail Pattern (BaseEntity + AuditorAware)
+
+═══════════════════════════════════════════════════════════
+ROLES AND ACCESS CONTROL
+═══════════════════════════════════════════════════════════
+
+ROLES (stored in DB, seeded on startup):
+  ADMIN    → Full access to everything
+  FACULTY  → Attendance, Marks, Reports, Announcements, Dashboard
+  STUDENT  → View own profile, courses, attendance, marks, materials
+
+DEFAULT CREDENTIALS (auto-seeded):
+  Username : admin
+  Password : Admin@123
+  Role     : ADMIN
+
+JWT IMPLEMENTATION:
+  - Token Type    : Bearer
+  - Algorithm     : HMAC-SHA (HS256 via jjwt)
+  - Expiry        : 24 hours (86400000 ms, configurable)
+  - Secret        : Base64-encoded, set via environment variable
+  - Claims stored : username, role
+  - Filter        : JwtAuthenticationFilter extends OncePerRequestFilter
+  - Storage (FE)  : localStorage (sp_token, sp_user keys)
+
+═══════════════════════════════════════════════════════════
+DATABASE SCHEMA — ALL 10 TABLES
+═══════════════════════════════════════════════════════════
+
+BASE ENTITY (inherited by all tables):
+  id            BIGINT AUTO_INCREMENT PK
+  created_date  DATETIME
+  updated_date  DATETIME
+  created_by    VARCHAR(100)
+  updated_by    VARCHAR(100)
+  deleted       BOOLEAN DEFAULT false
+
+TABLE: roles
+  id    BIGINT PK
+  name  VARCHAR(30) UNIQUE  → ADMIN | FACULTY | STUDENT
+
+TABLE: users
+  id        BIGINT PK
+  username  VARCHAR(100) UNIQUE NOT NULL
+  password  VARCHAR(255) NOT NULL  → BCrypt encoded
+  email     VARCHAR(150) UNIQUE NOT NULL
+  role_id   BIGINT FK → roles.id
+  active    BOOLEAN DEFAULT true
+  + BaseEntity columns
+
+TABLE: students
+  id           BIGINT PK
+  roll_number  VARCHAR(50) UNIQUE NOT NULL
+  first_name   VARCHAR(100) NOT NULL
+  last_name    VARCHAR(100)
+  email        VARCHAR(150) UNIQUE NOT NULL
+  phone        VARCHAR(20)
+  department   VARCHAR(100)
+  semester     INT
+  user_id      BIGINT FK → users.id (nullable, one-to-one)
+  + BaseEntity columns
+
+TABLE: courses
+  id           BIGINT PK
+  course_code  VARCHAR(30) UNIQUE NOT NULL
+  course_name  VARCHAR(150) NOT NULL
+  credits      INT NOT NULL
+  faculty_name VARCHAR(100)
+  + BaseEntity columns
+
+TABLE: student_courses
+  id          BIGINT PK
+  student_id  BIGINT FK → students.id
+  course_id   BIGINT FK → courses.id
+  UNIQUE(student_id, course_id)
+  + BaseEntity columns
+
+TABLE: attendance
+  id                     BIGINT PK
+  student_id             BIGINT FK → students.id
+  course_id              BIGINT FK → courses.id
+  attendance_percentage  DECIMAL(5,2) NOT NULL
+  UNIQUE(student_id, course_id)
+  + BaseEntity columns
+
+TABLE: marks
+  id          BIGINT PK
+  student_id  BIGINT FK → students.id
+  course_id   BIGINT FK → courses.id
+  score       DECIMAL(5,2) NOT NULL
+  UNIQUE(student_id, course_id)
+  + BaseEntity columns
+
+TABLE: announcements
+  id               BIGINT PK
+  title            VARCHAR(200) NOT NULL
+  description      VARCHAR(2000) NOT NULL
+  created_by_name  VARCHAR(100)
+  + BaseEntity columns
+
+TABLE: study_materials
+  id         BIGINT PK
+  course_id  BIGINT FK → courses.id
+  title      VARCHAR(200) NOT NULL
+  file_url   VARCHAR(500) NOT NULL
+  + BaseEntity columns
+
+TABLE: audit_logs
+  id        BIGINT PK
+  action    VARCHAR(200) NOT NULL
+  username  VARCHAR(100)
+  + BaseEntity columns
+
+═══════════════════════════════════════════════════════════
+ALL REST API ENDPOINTS (30+ endpoints)
+═══════════════════════════════════════════════════════════
+
+AUTH (Public):
+  POST /api/auth/login          → Login, returns JWT token
+  POST /api/auth/register       → Register new user
+
+STUDENTS (CRUD + Search):
+  GET    /api/students                → Search/list (paginated, sorted)
+  POST   /api/students                → Create student [ADMIN]
+  GET    /api/students/{id}           → Get by ID
+  PUT    /api/students/{id}           → Update student [ADMIN]
+  DELETE /api/students/{id}           → Soft delete [ADMIN]
+  GET    /api/students/me             → Own profile [STUDENT]
+
+COURSES (CRUD + Search):
+  GET    /api/courses                 → Search/list (paginated)
+  POST   /api/courses                 → Create course [ADMIN]
+  GET    /api/courses/{id}            → Get by ID
+  PUT    /api/courses/{id}            → Update course [ADMIN]
+  DELETE /api/courses/{id}            → Soft delete [ADMIN]
+
+ENROLLMENT:
+  POST   /api/student-courses                           → Enroll [ADMIN]
+  GET    /api/student-courses/student/{studentId}       → Student's courses
+  GET    /api/student-courses/course/{courseId}         → Course's students
+  DELETE /api/student-courses/student/{sId}/course/{cId}→ Unenroll [ADMIN]
+
+ATTENDANCE:
+  POST   /api/attendance                    → Record [ADMIN, FACULTY]
+  PUT    /api/attendance/{id}               → Update [ADMIN, FACULTY]
+  DELETE /api/attendance/{id}               → Delete [ADMIN, FACULTY]
+  GET    /api/attendance/student/{id}       → Student attendance
+  GET    /api/attendance/defaulters         → Below 75% (paginated)
+
+MARKS:
+  POST   /api/marks                         → Record [ADMIN, FACULTY]
+  PUT    /api/marks/{id}                    → Update [ADMIN, FACULTY]
+  DELETE /api/marks/{id}                    → Delete [ADMIN, FACULTY]
+  GET    /api/marks/student/{id}            → Student marks
+  GET    /api/marks/rankings                → Ranked by avg score (paginated)
+
+ANNOUNCEMENTS (CRUD):
+  GET    /api/announcements                 → All (paginated, newest first)
+  POST   /api/announcements                 → Create [ADMIN, FACULTY]
+  GET    /api/announcements/{id}            → Get by ID
+  PUT    /api/announcements/{id}            → Update [ADMIN]
+  DELETE /api/announcements/{id}            → Delete [ADMIN]
+
+STUDY MATERIALS (CRUD):
+  GET    /api/study-materials               → All (paginated)
+  POST   /api/study-materials               → Create [ADMIN]
+  GET    /api/study-materials/course/{id}   → By course
+  PUT    /api/study-materials/{id}          → Update [ADMIN]
+  DELETE /api/study-materials/{id}          → Delete [ADMIN]
+
+DASHBOARD [ADMIN, FACULTY]:
+  GET /api/dashboard/summary               → totalStudents, totalCourses,
+                                             averageAttendance, passPercentage
+  GET /api/dashboard/top-students          → Top N by avg score
+  GET /api/dashboard/low-attendance        → Students below 75%
+  GET /api/dashboard/at-risk-students      → Low attendance AND/OR low marks
+
+REPORTS [ADMIN, FACULTY]:
+  GET /api/reports/student-rankings        → Ranked students by avg score
+  GET /api/reports/attendance-defaulters   → Defaulters below 75%
+  GET /api/reports/course-performance      → Avg/High/Low per course
+  GET /api/reports/department-performance  → Avg score per department
+  GET /api/reports/pass-fail-statistics    → Pass vs fail counts and %
+  GET /api/reports/attendance-statistics   → Excellent/Good/Average/Poor bands
+  GET /api/reports/monthly-enrollment      → Enrollment count per month
+
+AUDIT LOGS [ADMIN only]:
+  GET /api/audit-logs                      → All logs paginated, newest first
+
+ACTUATOR (Public):
+  GET /actuator/health                     → App health status
+
+SWAGGER UI:
+  GET /swagger-ui.html                     → Interactive API docs
+
+═══════════════════════════════════════════════════════════
+FRONTEND PAGES (10 pages, all lazy loaded)
+═══════════════════════════════════════════════════════════
+
+1. LOGIN PAGE (/login)
+   - Reactive form with username + password
+   - Show/hide password toggle
+   - Error message on failed login
+   - Redirects to dashboard on success
+   - Shows default credentials hint
+
+2. LAYOUT (shared shell for all pages)
+   - Left sidebar (260px, dark blue #1a237e)
+   - Role-based navigation menu (shows only allowed pages)
+   - Top toolbar with hamburger + logout menu
+   - User info at bottom of sidebar
+
+3. DASHBOARD (/dashboard)
+   - 4 summary cards: Total Students, Total Courses,
+     Avg Attendance, Pass Percentage
+   - Top Students table (ADMIN/FACULTY only)
+   - Pass vs Fail visual statistics
+   - Attendance distribution bands
+   - At-Risk Students table
+
+4. STUDENTS (/students)
+   - Search bar with debounce (400ms)
+   - Paginated table with sorting
+   - Add/Edit Student inline form (ADMIN only)
+   - Delete with confirmation (ADMIN only)
+   - Fields: Roll No, Name, Email, Department, Semester
+
+5. COURSES (/courses)
+   - Search + paginated table
+   - Add/Edit Course inline form (ADMIN only)
+   - Fields: Code, Name, Credits, Faculty
+
+6. ATTENDANCE (/attendance)
+   - Tab 1: Record Attendance form (ADMIN/FACULTY)
+   - Tab 2: Defaulters table (below 75%) with badges
+
+7. MARKS (/marks)
+   - Tab 1: Enter Marks form (ADMIN/FACULTY)
+   - Tab 2: Student Rankings table with score chips
+
+8. ANNOUNCEMENTS (/announcements)
+   - Card list newest first
+   - Create/Edit announcement form (ADMIN/FACULTY)
+   - Blue left-border announcement cards
+
+9. STUDY MATERIALS (/study-materials)
+   - Table with course, title, external link button
+   - Add/Edit form with URL input (ADMIN only)
+
+10. REPORTS (/reports) [ADMIN/FACULTY only]
+    - Tab 1: Student Rankings (gold/silver/bronze)
+    - Tab 2: Attendance Defaulters
+    - Tab 3: Course Performance table
+    - Tab 4: Department Performance bar chart
+    - Tab 5: Pass vs Fail visual blocks
+    - Tab 6: Attendance Statistics distribution
+    - Tab 7: Monthly Enrollment bar chart with year selector
+
+11. PROFILE (/profile)
+    - Account info card (username, email, role)
+    - Student academic info (roll number, dept, semester) for STUDENT role
+    - Permissions card (what this role can/cannot do)
+
+═══════════════════════════════════════════════════════════
+ENVIRONMENT VARIABLES
+═══════════════════════════════════════════════════════════
+
+BACKEND (.env or system env):
+  DB_HOST          = localhost (or docker service name)
+  DB_PORT          = 3306
+  DB_NAME          = student_portal
+  DB_USERNAME      = portaluser
+  DB_PASSWORD      = portalpass
+  JWT_SECRET       = Base64-encoded string (min 32 chars)
+  JWT_EXPIRATION   = 86400000 (24 hours in ms)
+  CORS_ORIGINS     = http://localhost:4200
+
+FRONTEND (environment.ts):
+  apiUrl           = http://localhost:8080/api
+
+═══════════════════════════════════════════════════════════
+RUNNING THE APPLICATION
+═══════════════════════════════════════════════════════════
+
+OPTION A — Manual (Development):
+
+  1. Start MySQL:
+     mysql -u root -p
+     CREATE DATABASE student_portal;
+
+  2. Start Backend:
+     cd backend
+     mvn spring-boot:run -Dspring-boot.run.profiles=dev
+     → Runs on http://localhost:8080
+     → Auto-creates all tables and seeds admin user
+
+  3. Start Frontend:
+     cd frontend
+     npm install --legacy-peer-deps
+     ng serve
+     → Runs on http://localhost:4200
+
+OPTION B — Docker Compose (One command):
+  cp .env.example .env
+  docker-compose up --build -d
+  → MySQL:    localhost:3306
+  → Backend:  http://localhost:8080
+  → Frontend: http://localhost:80
+
+DEFAULT LOGIN:
+  Username: admin
+  Password: Admin@123
+
+═══════════════════════════════════════════════════════════
+TESTING
+═══════════════════════════════════════════════════════════
+
+UNIT TESTS (Mockito):
+  - StudentServiceTest   → create, update, delete, getById
+  - AttendanceServiceTest→ create, duplicate check, delete
+  - MarksServiceTest     → create, grade calculation (parametrized)
+  - AuthServiceTest      → login, register, duplicate handling
+
+INTEGRATION TESTS (MockMvc + H2):
+  - AuthControllerTest   → register, login, validation, conflict
+  - StudentControllerTest→ role access (ADMIN/FACULTY/STUDENT)
+
+RUN TESTS:
+  cd backend
+  mvn test -Dspring.profiles.active=test
+
+═══════════════════════════════════════════════════════════
+PROJECT FILE STRUCTURE
+═══════════════════════════════════════════════════════════
+
+student-portal/
+├── .github/workflows/ci-cd.yml     ← GitHub Actions pipeline
+├── backend/
+│   ├── Dockerfile                  ← Multi-stage Java build
+│   ├── pom.xml                     ← Maven dependencies
+│   └── src/main/java/com/portal/studentportal/
+│       ├── StudentPortalApplication.java
+│       ├── config/
+│       │   ├── AuditorAwareConfig.java
+│       │   ├── DataSeeder.java
+│       │   ├── OpenApiConfig.java
+│       │   └── SecurityConfig.java
+│       ├── controller/             ← 11 REST controllers
+│       ├── dto/                    ← Request + Response DTOs
+│       │   ├── auth/
+│       │   ├── student/
+│       │   ├── course/
+│       │   ├── attendance/
+│       │   ├── marks/
+│       │   ├── enrollment/
+│       │   ├── announcement/
+│       │   ├── studymaterial/
+│       │   ├── dashboard/
+│       │   ├── report/
+│       │   ├── audit/
+│       │   └── common/
+│       ├── entity/                 ← 10 JPA entities + BaseEntity
+│       ├── exception/              ← GlobalExceptionHandler + 3 exceptions
+│       ├── mapper/                 ← 4 MapStruct mappers
+│       ├── repository/             ← 10 Spring Data JPA repositories
+│       ├── security/               ← JWT filter, service, UserDetails
+│       └── service/                ← 9 interfaces + 9 implementations
+│   └── src/test/                   ← 4 unit tests + 2 integration tests
+│
+├── frontend/
+│   ├── Dockerfile                  ← Multi-stage Angular + Nginx
+│   ├── nginx.conf                  ← SPA routing config
+│   ├── package.json
+│   └── src/app/
+│       ├── app.component.ts
+│       ├── app.config.ts
+│       ├── app.routes.ts           ← Lazy loaded routes
+│       ├── core/
+│       │   ├── guards/             ← authGuard, roleGuard
+│       │   ├── interceptors/       ← authInterceptor, errorInterceptor
+│       │   ├── models/             ← TypeScript interfaces
+│       │   └── services/           ← 8 API services
+│       ├── features/               ← 10 page components
+│       │   ├── auth/login/
+│       │   ├── dashboard/
+│       │   ├── students/
+│       │   ├── courses/
+│       │   ├── attendance/
+│       │   ├── marks/
+│       │   ├── announcements/
+│       │   ├── study-materials/
+│       │   ├── reports/
+│       │   └── profile/
+│       └── shared/components/layout/
+│
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+├── README.md
+└── docs/
+    ├── ER_DIAGRAM.md
+    └── ARCHITECTURE.md
+
+═══════════════════════════════════════════════════════════
+CI/CD PIPELINE (GitHub Actions)
+═══════════════════════════════════════════════════════════
+
+Triggers: push to main or develop, PRs to main
+
+Job 1 — Backend:
+  → Checkout → Java 21 → Maven build → Run tests → Package JAR
+
+Job 2 — Frontend:
+  → Checkout → Node 20 → npm install → Angular production build
+
+Job 3 — Docker Push (main branch only):
+  → Login to Docker Hub → Build backend image → Push
+  → Build frontend image → Push
+
+Job 4 — Deploy to Render (main branch only):
+  → Trigger Render deploy hook for backend
+  → Trigger Render deploy hook for frontend
+
+Required GitHub Secrets:
+  DOCKER_HUB_USERNAME
+  DOCKER_HUB_TOKEN
+  RENDER_BACKEND_SERVICE_ID
+  RENDER_BACKEND_DEPLOY_KEY
+  RENDER_FRONTEND_SERVICE_ID
+  RENDER_FRONTEND_DEPLOY_KEY
+
+═══════════════════════════════════════════════════════════
+BUSINESS LOGIC HIGHLIGHTS
+═══════════════════════════════════════════════════════════
+
+GRADE CALCULATION (automatic in MarksService):
+  Score >= 90  → A+
+  Score >= 80  → A
+  Score >= 70  → B+
+  Score >= 60  → B
+  Score >= 50  → C
+  Score >= 40  → D
+  Score < 40   → F
+
+ATTENDANCE DEFAULTER THRESHOLD:
+  Below 75% → flagged as defaulter
+
+ATTENDANCE BANDS:
+  Excellent → >= 90%
+  Good      → 75% to 89%
+  Average   → 50% to 74%
+  Poor      → < 50%
+
+PASS/FAIL THRESHOLD:
+  Score >= 40 → PASS
+  Score < 40  → FAIL
+
+AT-RISK STUDENT DETECTION:
+  Low attendance (< 75%) AND/OR low marks (< 40 avg)
+  Shows reason: "Low attendance", "Low marks", or both
+
+SOFT DELETE:
+  No records are ever hard deleted from the database
+  All deletes set deleted=true
+  All queries filter WHERE deleted=false
+
+AUDIT LOGGING:
+  Every create/update/delete/login/register action
+  is recorded in audit_logs table automatically
+  with action name and username
+
+═══════════════════════════════════════════════════════════
+SWAGGER API DOCUMENTATION
+═══════════════════════════════════════════════════════════
+
+URL: http://localhost:8080/swagger-ui.html
+
+Tagged groups:
+  Authentication
+  Students
+  Courses
+  Student Course Enrollment
+  Attendance
+  Marks
+  Announcements
+  Study Materials
+  Dashboard
+  Reports
+  Audit Logs
+
+To test in Swagger:
+  1. Open /swagger-ui.html
+  2. Click Authorize button (top right)
+  3. POST /api/auth/login → copy token
+  4. Paste token in Authorize popup
+  5. All endpoints now work with your role
+
+═══════════════════════════════════════════════════════════
+POSTMAN QUICK REFERENCE
+═══════════════════════════════════════════════════════════
+
+BASE URL    : http://localhost:8080
+AUTH TYPE   : Bearer Token
+CONTENT TYPE: application/json
+
+LOGIN FIRST → copy token → add to Authorization header:
+  Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc4MTc1NzgwMSwiZXhwIjoxNzgxODQ0MjAxfQ.mjihKlK4QBQzzh8KY7aXaBNiu-8meJVclOl4CYT2tPc
+
+RECOMMENDED TEST ORDER:
+  1. POST /api/auth/login           → get token
+  2. POST /api/courses              → create course (note id)
+  3. POST /api/students             → create student (note id)
+  4. POST /api/student-courses      → enroll
+  5. POST /api/attendance           → record attendance
+  6. POST /api/marks                → record marks
+  7. GET  /api/dashboard/summary    → see summary
+  8. GET  /api/reports/student-rankings → see rankings
+  9. GET  /api/dashboard/at-risk-students → see at-risk
+  10. GET /api/audit-logs           → see audit trail
+
+
+
+ README File
+
+The README should include all details clearly 
+
+• Project title
+
+• Objective
+
+• Technologies used
+
+• Features implemented
+
+• Steps to run the application
+
+All Postman rest api requests and responses
+Try to get all https status codes possible 

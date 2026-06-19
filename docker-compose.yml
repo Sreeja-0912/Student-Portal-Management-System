@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: student-portal-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-student_portal}
+      MYSQL_USER: ${DB_USERNAME:-portaluser}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-Sreematha@2025}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-Sreematha@2025}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-Sreematha@2025}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: student-portal-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-student_portal}
+      DB_USERNAME: ${DB_USERNAME:-portaluser}
+      DB_PASSWORD: ${DB_PASSWORD:-Sreematha@2025}
+      JWT_SECRET: ${JWT_SECRET:-c3R1ZGVudC1wb3J0YWwtZGV2ZWxvcG1lbnQtc2VjcmV0LWtleS0zMi1wbHVz}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200,http://localhost:80}
+    ports:
+      - "8081:8080"
+
+  frontend:
+    build: ./frontend
+    container_name: student-portal-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8082:80"
+
+volumes:
+  mysql_data:

@@ -1,0 +1,2321 @@
+{
+  "info": {
+    "name": "Student Portal Management System API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"token\": \"<jwt>\",\n  \"username\": \"admin\",\n  \"email\": \"admin@studentportal.local\",\n  \"role\": \"ADMIN\"\n}"
+        },
+        {
+          "name": "401 Unauthorized",
+          "originalRequest": {},
+          "status": "401 Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": 401,\n  \"error\": \"Unauthorized\",\n  \"message\": \"Invalid username or password\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"student1\",\n  \"email\": \"student1@example.com\",\n  \"password\": \"Student@123\",\n  \"role\": \"STUDENT\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"token\": \"<jwt>\",\n  \"username\": \"student1\",\n  \"email\": \"student1@example.com\",\n  \"role\": \"STUDENT\"\n}"
+        },
+        {
+          "name": "409 Conflict",
+          "originalRequest": {},
+          "status": "409 Conflict",
+          "code": 409,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": 409,\n  \"message\": \"Username already exists\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "List Students",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/students?keyword=&page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "students?keyword=&page=0&size=10"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"content\": [\n    {\n      \"id\": 1,\n      \"rollNumber\": \"R001\",\n      \"firstName\": \"Asha\",\n      \"lastName\": \"K\",\n      \"email\": \"asha@example.com\",\n      \"department\": \"CSE\",\n      \"semester\": 3\n    }\n  ],\n  \"totalElements\": 1,\n  \"totalPages\": 1,\n  \"size\": 20,\n  \"number\": 0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Create Student",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/students",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "students"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rollNumber\": \"R001\",\n  \"firstName\": \"Asha\",\n  \"lastName\": \"K\",\n  \"email\": \"asha@example.com\",\n  \"phone\": \"9999999999\",\n  \"department\": \"CSE\",\n  \"semester\": 3,\n  \"userId\": null\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"rollNumber\": \"R001\",\n  \"firstName\": \"Asha\",\n  \"email\": \"asha@example.com\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get Student",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/students/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "students",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"rollNumber\": \"R001\",\n  \"firstName\": \"Asha\"\n}"
+        },
+        {
+          "name": "404 Not Found",
+          "originalRequest": {},
+          "status": "404 Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": 404,\n  \"message\": \"Student not found with id 1\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Update Student",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/students/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "students",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rollNumber\": \"R001\",\n  \"firstName\": \"Asha\",\n  \"lastName\": \"K\",\n  \"email\": \"asha@example.com\",\n  \"phone\": \"9999999999\",\n  \"department\": \"CSE\",\n  \"semester\": 4,\n  \"userId\": null\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"semester\": 4\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete Student",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/students/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "students",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "204 No Content",
+          "originalRequest": {},
+          "status": "204 No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}"
+        }
+      ]
+    },
+    {
+      "name": "Student Me",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/students/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "students",
+            "me"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"rollNumber\": \"R001\",\n  \"firstName\": \"Asha\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "List Courses",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/courses?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "courses?page=0&size=10"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"content\": [\n    {\n      \"id\": 1,\n      \"courseCode\": \"CS101\",\n      \"courseName\": \"Programming Fundamentals\",\n      \"credits\": 4,\n      \"facultyName\": \"Dr. Sharma\"\n    }\n  ],\n  \"totalElements\": 1,\n  \"totalPages\": 1,\n  \"size\": 20,\n  \"number\": 0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Create Course",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/courses",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "courses"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"courseCode\": \"CS201\",\n  \"courseName\": \"Data Structures\",\n  \"credits\": 4,\n  \"facultyName\": \"Prof. Mehta\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 2,\n  \"courseCode\": \"CS201\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get Course",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/courses/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "courses",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"courseCode\": \"CS101\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Update Course",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/courses/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "courses",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"courseCode\": \"CS101\",\n  \"courseName\": \"Programming Fundamentals\",\n  \"credits\": 4,\n  \"facultyName\": \"Dr. Rao\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"facultyName\": \"Dr. Rao\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete Course",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/courses/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "courses",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "204 No Content",
+          "originalRequest": {},
+          "status": "204 No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}"
+        }
+      ]
+    },
+    {
+      "name": "Enroll Student",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/student-courses",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "student-courses"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"courseId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"studentId\": 1,\n  \"courseId\": 1\n}"
+        }
+      ]
+    },
+    {
+      "name": "Student Courses",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/student-courses/student/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "student-courses",
+            "student",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"id\": 1,\n    \"studentId\": 1,\n    \"courseId\": 1,\n    \"courseCode\": \"CS101\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Course Students",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/student-courses/course/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "student-courses",
+            "course",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"id\": 1,\n    \"studentId\": 1,\n    \"studentName\": \"Asha K\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Unenroll",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/student-courses/student/1/course/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "student-courses",
+            "student",
+            "1",
+            "course",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "204 No Content",
+          "originalRequest": {},
+          "status": "204 No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}"
+        }
+      ]
+    },
+    {
+      "name": "Record Attendance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/attendance",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "attendance"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"courseId\": 1,\n  \"attendancePercentage\": 82.5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"attendancePercentage\": 82.5\n}"
+        }
+      ]
+    },
+    {
+      "name": "Update Attendance",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/attendance/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "attendance",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"courseId\": 1,\n  \"attendancePercentage\": 88.0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"attendancePercentage\": 88.0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete Attendance",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/attendance/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "attendance",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "204 No Content",
+          "originalRequest": {},
+          "status": "204 No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}"
+        }
+      ]
+    },
+    {
+      "name": "Student Attendance",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/attendance/student/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "attendance",
+            "student",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"studentName\": \"Asha K\",\n    \"courseCode\": \"CS101\",\n    \"attendancePercentage\": 88.0\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Attendance Defaulters",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/attendance/defaulters?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "attendance",
+            "defaulters?page=0&size=10"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"content\": [\n    {\n      \"studentName\": \"Asha K\",\n      \"attendancePercentage\": 70.0\n    }\n  ],\n  \"totalElements\": 1,\n  \"totalPages\": 1,\n  \"size\": 20,\n  \"number\": 0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Record Marks",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/marks",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "marks"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"courseId\": 1,\n  \"score\": 91.0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"score\": 91.0,\n  \"grade\": \"A+\",\n  \"result\": \"PASS\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Update Marks",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/marks/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "marks",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"courseId\": 1,\n  \"score\": 84.0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"score\": 84.0,\n  \"grade\": \"A\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete Marks",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/marks/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "marks",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "204 No Content",
+          "originalRequest": {},
+          "status": "204 No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}"
+        }
+      ]
+    },
+    {
+      "name": "Student Marks",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/marks/student/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "marks",
+            "student",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"courseCode\": \"CS101\",\n    \"score\": 84.0,\n    \"grade\": \"A\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Marks Rankings",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/marks/rankings?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "marks",
+            "rankings?page=0&size=10"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"content\": [\n    {\n      \"rank\": 1,\n      \"studentName\": \"Asha K\",\n      \"averageScore\": 84.0,\n      \"grade\": \"A\"\n    }\n  ],\n  \"totalElements\": 1,\n  \"totalPages\": 1,\n  \"size\": 20,\n  \"number\": 0\n}"
+        }
+      ]
+    },
+    {
+      "name": "List Announcements",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/announcements?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "announcements?page=0&size=10"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"content\": [\n    {\n      \"id\": 1,\n      \"title\": \"Exam Schedule\",\n      \"description\": \"Midterm starts Monday\"\n    }\n  ],\n  \"totalElements\": 1,\n  \"totalPages\": 1,\n  \"size\": 20,\n  \"number\": 0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Create Announcement",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/announcements",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "announcements"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Exam Schedule\",\n  \"description\": \"Midterm starts Monday\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"title\": \"Exam Schedule\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get Announcement",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/announcements/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "announcements",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"title\": \"Exam Schedule\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Update Announcement",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/announcements/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "announcements",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Updated Exam Schedule\",\n  \"description\": \"Updated details\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"title\": \"Updated Exam Schedule\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete Announcement",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/announcements/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "announcements",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "204 No Content",
+          "originalRequest": {},
+          "status": "204 No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}"
+        }
+      ]
+    },
+    {
+      "name": "List Study Materials",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/study-materials?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "study-materials?page=0&size=10"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"content\": [\n    {\n      \"id\": 1,\n      \"courseCode\": \"CS101\",\n      \"title\": \"Unit 1 Notes\",\n      \"fileUrl\": \"https://example.com/unit1.pdf\"\n    }\n  ],\n  \"totalElements\": 1,\n  \"totalPages\": 1,\n  \"size\": 20,\n  \"number\": 0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Create Study Material",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/study-materials",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "study-materials"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"courseId\": 1,\n  \"title\": \"Unit 1 Notes\",\n  \"fileUrl\": \"https://example.com/unit1.pdf\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"title\": \"Unit 1 Notes\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Study Materials By Course",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/study-materials/course/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "study-materials",
+            "course",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"id\": 1,\n    \"title\": \"Unit 1 Notes\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Update Study Material",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/study-materials/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "study-materials",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"courseId\": 1,\n  \"title\": \"Updated Notes\",\n  \"fileUrl\": \"https://example.com/updated.pdf\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 1,\n  \"title\": \"Updated Notes\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete Study Material",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/study-materials/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "study-materials",
+            "1"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "204 No Content",
+          "originalRequest": {},
+          "status": "204 No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard Summary",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/dashboard/summary",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dashboard",
+            "summary"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"totalStudents\": 20,\n  \"totalCourses\": 5,\n  \"averageAttendance\": 81.4,\n  \"passPercentage\": 88.0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard Top Students",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/dashboard/top-students?limit=5",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dashboard",
+            "top-students?limit=5"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"rank\": 1,\n    \"studentName\": \"Asha K\",\n    \"averageScore\": 91.0\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard Low Attendance",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/dashboard/low-attendance",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dashboard",
+            "low-attendance"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"studentName\": \"Asha K\",\n    \"attendancePercentage\": 70.0\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard At Risk",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/dashboard/at-risk-students",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dashboard",
+            "at-risk-students"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"studentName\": \"Asha K\",\n    \"reason\": \"Low attendance\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Report Student Rankings",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reports/student-rankings?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "student-rankings?page=0&size=10"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Report Attendance Defaulters",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reports/attendance-defaulters?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "attendance-defaulters?page=0&size=10"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Report Course Performance",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reports/course-performance",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "course-performance"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"courseCode\": \"CS101\",\n    \"averageScore\": 76.5,\n    \"highestScore\": 95.0,\n    \"lowestScore\": 42.0\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Report Department Performance",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reports/department-performance",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "department-performance"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"department\": \"CSE\",\n    \"averageScore\": 78.5\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Report Pass Fail",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reports/pass-fail-statistics",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "pass-fail-statistics"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"passCount\": 18,\n  \"failCount\": 2,\n  \"passPercentage\": 90.0,\n  \"failPercentage\": 10.0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Report Attendance Statistics",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reports/attendance-statistics",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "attendance-statistics"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"label\": \"Excellent >= 90%\",\n    \"count\": 10\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Report Monthly Enrollment",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reports/monthly-enrollment?year=2026",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "monthly-enrollment?year=2026"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"month\": 1,\n    \"count\": 12\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Audit Logs",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/audit-logs?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "audit-logs?page=0&size=10"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"content\": [\n    {\n      \"id\": 1,\n      \"action\": \"LOGIN\",\n      \"username\": \"admin\"\n    }\n  ],\n  \"totalElements\": 1,\n  \"totalPages\": 1,\n  \"size\": 20,\n  \"number\": 0\n}"
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/actuator/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "actuator",
+            "health"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"UP\"\n}"
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set baseUrl in collection variables. Login request can save token manually."
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (pm.request.url.toString().includes('/api/auth/login') && pm.response.code === 200) {",
+          "  const json = pm.response.json();",
+          "  pm.collectionVariables.set('token', json.token);",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}

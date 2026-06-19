@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: student-portal
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:student_portal}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Sreematha@2025}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: ${PORT:8080}
+
+app:
+  jwt:
+    # Development fallback is Base64 for: student-portal-development-secret-key-32-plus
+    secret: ${JWT_SECRET:c3R1ZGVudC1wb3J0YWwtZGV2ZWxvcG1lbnQtc2VjcmV0LWtleS0zMi1wbHVz}
+    expiration-ms: ${JWT_EXPIRATION:86400000}
+  cors:
+    origins: ${CORS_ORIGINS:http://localhost:4200,http://localhost:80}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
