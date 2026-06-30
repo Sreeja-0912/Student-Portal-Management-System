@@ -33,9 +33,9 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-Sreematha@2025}
       JWT_SECRET: ${JWT_SECRET:-c3R1ZGVudC1wb3J0YWwtZGV2ZWxvcG1lbnQtc2VjcmV0LWtleS0zMi1wbHVz}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200,http://localhost:80}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200,http://localhost:80,http://localhost:8082,http://backend:8080}
     ports:
-      - "8081:8080"
+      - "8080:8080"
 
   frontend:
     build: ./frontend
@@ -44,7 +44,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "8082:80"
+      - "4200:80"
 
 volumes:
   mysql_data:
